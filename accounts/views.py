@@ -51,3 +51,34 @@ class TokenView(APIView):
                 )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        token = Token.objects.get(user=request.user)
+        token.delete()
+        return Response(
+            {"message": "User logged out successfully"}, status=status.HTTP_200_OK
+        )
+
+
+class UserRegistrationView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = [
+        IsAuthenticated,
+    ]
+    lookup_field = "id"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(id=self.request.user.id)
