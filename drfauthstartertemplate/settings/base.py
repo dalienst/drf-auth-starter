@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "cloudinary",
     "django_filters",
     # Apps
+    "accounts",
 ]
 
 MIDDLEWARE = [
