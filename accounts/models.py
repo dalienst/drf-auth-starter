@@ -48,7 +48,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **kwargs)
 
 
-class User(AbstractBaseUser, PermissionsMixin, UniversalIdModel, TimeStampedModel):
+class User(AbstractBaseUser, PermissionsMixin, UniversalIdModel, TimeStampedModel, AbstractProfileModel):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)

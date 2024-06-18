@@ -28,7 +28,6 @@ class TokenView(APIView):
                 if user.is_active:
                     token, created = Token.objects.get_or_create(user=user)
                     user_details = {
-                        "token": token.key,
                         "id": user.id,
                         "email": user.email,
                         "first_name": user.first_name,
@@ -37,6 +36,7 @@ class TokenView(APIView):
                         "is_active": user.is_active,
                         "is_staff": user.is_staff,
                         "is_verified": user.is_verified,
+                        "token": token.key,
                     }
                     return Response(user_details, status=status.HTTP_200_OK)
                 else:
