@@ -9,6 +9,7 @@ from accounts.abstracts import UniversalIdModel, TimeStampedModel, AbstractProfi
 
 
 class UserManager(BaseUserManager):
+    use_in_migrations = True
 
     def _create_user(self, email, password, **kwargs):
         """
@@ -31,6 +32,7 @@ class UserManager(BaseUserManager):
         kwargs.setdefault("is_staff", True)
         kwargs.setdefault("is_superuser", True)
         kwargs.setdefault("is_active", True)
+        kwargs.setdefault("is_verified", True)
 
         if not password:
             raise ValueError("Password is required")
@@ -40,5 +42,24 @@ class UserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
         if kwargs.get("is_active") is not True:
             raise ValueError("Superuser must have is_active=True.")
+        if kwargs.get("is_verified") is not True:
+            raise ValueError("Superuser must have is_verified=True.")
 
         return self._create_user(email, password, **kwargs)
+
+
+class User(AbstractBaseUser, PermissionsMixin, UniversalIdModel, TimeStampedModel):
+    email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
+
+    objects = UserManager()
+    REQUIRED_FIELDS = ["first_name", "last_name", "password"]
+    USERNAME_FIELD = "email"
+
+    def __str__(self):
+        return self.email
