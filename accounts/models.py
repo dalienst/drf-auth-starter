@@ -1,15 +1,11 @@
-from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
+from django.db import models
 
-from accounts.abstracts import (
-    UniversalIdModel,
-    TimeStampedModel,
-    AbstractProfileModel,
-)
+from accounts.abstracts import AbstractProfileModel, TimeStampedModel, UniversalIdModel
 
 
 class UserManager(BaseUserManager):

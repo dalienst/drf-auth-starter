@@ -1,11 +1,6 @@
 from django.urls import path
 
-from accounts.views import (
-    TokenView,
-    LogoutView,
-    UserDetailView,
-    UserRegistrationView,
-)
+from accounts.views import LogoutView, TokenView, UserDetailView, UserRegistrationView
 
 urlpatterns = [
     path("token/", TokenView.as_view(), name="token_obtain_pair"),

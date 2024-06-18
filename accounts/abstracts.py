@@ -1,7 +1,7 @@
 import uuid
 
-from django.db import models
 from cloudinary.models import CloudinaryField
+from django.db import models
 
 
 class TimeStampedModel(models.Model):

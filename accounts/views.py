@@ -1,12 +1,11 @@
-from django.contrib.auth import get_user_model, authenticate
-
+from django.contrib.auth import authenticate, get_user_model
+from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
-from rest_framework import status, generics
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from accounts.serializers import UserSerializer, UserLoginSerializer
+from accounts.serializers import UserLoginSerializer, UserSerializer
 
 User = get_user_model()
 
@@ -46,11 +45,7 @@ class TokenView(APIView):
                     )
             else:
                 return Response(
-                    {
-                        "detail": (
-                            "Unable to log in with provided credentials."
-                        )
-                    },
+                    {"detail": ("Unable to log in with provided credentials.")},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -71,9 +66,7 @@ class LogoutView(APIView):
 
 class UserRegistrationView(APIView):
     def post(self, request):
-        serializer = UserSerializer(
-            data=request.data, context={"request": request}
-        )
+        serializer = UserSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)

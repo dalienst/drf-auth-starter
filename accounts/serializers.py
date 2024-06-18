@@ -1,12 +1,12 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from accounts.validators import (
     validate_password_digit,
-    validate_password_uppercase,
-    validate_password_symbol,
     validate_password_lowercase,
+    validate_password_symbol,
+    validate_password_uppercase,
 )
 
 User = get_user_model()
