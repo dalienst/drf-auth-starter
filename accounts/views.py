@@ -46,7 +46,11 @@ class TokenView(APIView):
                     )
             else:
                 return Response(
-                    {"detail": ("Unable to log in with provided credentials.")},
+                    {
+                        "detail": (
+                            "Unable to log in with provided credentials."
+                        )
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -60,13 +64,16 @@ class LogoutView(APIView):
         token = Token.objects.get(user=request.user)
         token.delete()
         return Response(
-            {"message": "User logged out successfully"}, status=status.HTTP_200_OK
+            {"message": "User logged out successfully"},
+            status=status.HTTP_200_OK,
         )
 
 
 class UserRegistrationView(APIView):
     def post(self, request):
-        serializer = UserSerializer(data=request.data, context={"request": request})
+        serializer = UserSerializer(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)

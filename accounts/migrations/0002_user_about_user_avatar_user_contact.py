@@ -7,23 +7,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0001_initial'),
+        ("accounts", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='about',
+            model_name="user",
+            name="about",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='user',
-            name='avatar',
-            field=cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='avatar'),
+            model_name="user",
+            name="avatar",
+            field=cloudinary.models.CloudinaryField(
+                blank=True, max_length=255, null=True, verbose_name="avatar"
+            ),
         ),
         migrations.AddField(
-            model_name='user',
-            name='contact',
+            model_name="user",
+            name="contact",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
     ]

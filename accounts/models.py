@@ -5,7 +5,11 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 
-from accounts.abstracts import UniversalIdModel, TimeStampedModel, AbstractProfileModel
+from accounts.abstracts import (
+    UniversalIdModel,
+    TimeStampedModel,
+    AbstractProfileModel,
+)
 
 
 class UserManager(BaseUserManager):
@@ -48,7 +52,13 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **kwargs)
 
 
-class User(AbstractBaseUser, PermissionsMixin, UniversalIdModel, TimeStampedModel, AbstractProfileModel):
+class User(
+    AbstractBaseUser,
+    PermissionsMixin,
+    UniversalIdModel,
+    TimeStampedModel,
+    AbstractProfileModel,
+):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)

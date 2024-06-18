@@ -23,6 +23,7 @@ flake8 = "7.1.0"
 isort = "5.13.2"
 pre-commit = "3.7.1"
 mypy = "1.10.0"
+django-stubs = "*"
 
 [requires]
 python_version = "3.12"
