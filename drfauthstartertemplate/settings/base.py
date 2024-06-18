@@ -2,7 +2,6 @@
 Django settings for drfauthstartertemplate project.
 """
 
-from datetime import timedelta
 from pathlib import Path
 
 import cloudinary
