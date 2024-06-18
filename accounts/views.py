@@ -1,3 +1,53 @@
-from django.shortcuts import render
+from django.contrib.auth import get_user_model, authenticate
 
-# Create your views here.
+from rest_framework.authtoken.models import Token
+from rest_framework import status, generics
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from accounts.serializers import UserSerializer, UserLoginSerializer
+
+User = get_user_model()
+
+
+class TokenView(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = UserLoginSerializer
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            email = serializer.validated_data["email"]
+            password = serializer.validated_data["password"]
+
+            user = authenticate(email=email, password=password)
+
+            if user:
+                if user.is_active:
+                    token, created = Token.objects.get_or_create(user=user)
+                    user_details = {
+                        "token": token.key,
+                        "id": user.id,
+                        "email": user.email,
+                        "first_name": user.first_name,
+                        "last_name": user.last_name,
+                        "is_superuser": user.is_superuser,
+                        "is_active": user.is_active,
+                        "is_staff": user.is_staff,
+                        "is_verified": user.is_verified,
+                    }
+                    return Response(user_details, status=status.HTTP_200_OK)
+                else:
+                    return Response(
+                        {"detail": ("User account is disabled.")},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            else:
+                return Response(
+                    {"detail": ("Unable to log in with provided credentials.")},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
