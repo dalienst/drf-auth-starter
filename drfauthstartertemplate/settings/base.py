@@ -3,13 +3,13 @@ Django settings for drfauthstartertemplate project.
 """
 
 from pathlib import Path
-from corsheaders.defaults import default_headers
-from decouple import config
-from datetime import timedelta
-import dj_database_url
+
 import cloudinary
 import cloudinary.api
 import cloudinary.uploader
+import dj_database_url
+from corsheaders.defaults import default_headers
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "cloudinary",
     "django_filters",
     # Apps
+    "accounts",
 ]
 
 MIDDLEWARE = [
