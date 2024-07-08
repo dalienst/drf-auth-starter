@@ -5,7 +5,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from accounts.serializers import UserLoginSerializer, UserSerializer
+from accounts.serializers import (
+    PasswordResetRequestSerializer,
+    PasswordResetSerializer,
+    UserLoginSerializer,
+    UserSerializer,
+)
 
 User = get_user_model()
 
@@ -82,3 +87,23 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return super().get_queryset().filter(id=self.request.user.id)
+
+
+class PasswordResetRequestView(APIView):
+    serializer_class = PasswordResetRequestSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Password reset request sent."}, status=200)
+
+
+class PasswordResetView(APIView):
+    serializer_class = PasswordResetSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Password reset successful."}, status=200)

@@ -1,8 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
-from django.utils.translation import gettext_lazy as _
-from rest_framework import response, serializers
+from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from accounts.models import PasswordResetToken
@@ -90,18 +89,23 @@ class PasswordResetRequestSerializer(serializers.ModelSerializer):
         token = PasswordResetTokenGenerator().make_token(user)
         reset = PasswordResetToken.objects.create(user=user, token=token)
         reset_link = f"{DOMAIN}/reset-password/{reset.token}/"
-        send_mail(
-            "Password Reset",
-            f"Click the link to reset your password: {reset_link}",
-            EMAIL_USER,
-            [user.email],
-        )
+
+        try:
+            send_mail(
+                "Password Reset",
+                f"Click the link to reset your password: {reset_link}",
+                EMAIL_USER,
+                [user.email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            raise serializers.ValidationError(f"Error sending email: {e}")
+
         reset.save()
+        return reset
 
-        return response.Response({"message": "Password reset email sent"})
 
-
-class PasswordResetSerializer(serializers.ModelSerializer):
+class PasswordResetSerializer(serializers.Serializer):
     token = serializers.CharField()
     password = serializers.CharField(
         max_length=128,
@@ -119,11 +123,9 @@ class PasswordResetSerializer(serializers.ModelSerializer):
         try:
             reset_token = PasswordResetToken.objects.get(token=value)
             if not reset_token.is_valid():
-                raise serializers.ValidationError(_("Token is expired"))
-
+                raise serializers.ValidationError("Token is expired")
         except PasswordResetToken.DoesNotExist:
-            raise serializers.ValidationError(_("Token is invalid"))
-
+            raise serializers.ValidationError("Token is invalid")
         return value
 
     def save(self, **kwargs):
