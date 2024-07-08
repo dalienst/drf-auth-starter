@@ -1,9 +1,12 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
 from django.db import models
+from django.utils import timezone
 
 from accounts.abstracts import AbstractProfileModel, TimeStampedModel, UniversalIdModel
 
@@ -69,3 +72,13 @@ class User(
 
     def __str__(self):
         return self.email
+
+
+class PasswordResetToken(TimeStampedModel, UniversalIdModel):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="password_reset_tokens"
+    )
+    token = models.CharField(max_length=255)
+
+    def is_valid(self):
+        return self.created_at > timezone.now() - timedelta(hours=1)
