@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
+from django.utils.translation import gettext_lazy as _
 from rest_framework import response, serializers
 from rest_framework.validators import UniqueValidator
 
@@ -71,7 +72,7 @@ class UserLoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, write_only=True)
 
 
-class PasswordResetTokenSerializer(serializers.ModelSerializer):
+class PasswordResetRequestSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
 
     def validate_email(self, value):
@@ -98,3 +99,39 @@ class PasswordResetTokenSerializer(serializers.ModelSerializer):
         reset.save()
 
         return response.Response({"message": "Password reset email sent"})
+
+
+class PasswordResetSerializer(serializers.ModelSerializer):
+    token = serializers.CharField()
+    password = serializers.CharField(
+        max_length=128,
+        min_length=5,
+        write_only=True,
+        validators=[
+            validate_password_digit,
+            validate_password_uppercase,
+            validate_password_symbol,
+            validate_password_lowercase,
+        ],
+    )
+
+    def validate_token(self, value):
+        try:
+            reset_token = PasswordResetToken.objects.get(token=value)
+            if not reset_token.is_valid():
+                raise serializers.ValidationError(_("Token is expired"))
+
+        except PasswordResetToken.DoesNotExist:
+            raise serializers.ValidationError(_("Token is invalid"))
+
+        return value
+
+    def save(self, **kwargs):
+        token = self.validated_data["token"]
+        password = self.validated_data["password"]
+        reset_token = PasswordResetToken.objects.get(token=token)
+        user = reset_token.user
+        user.set_password(password)
+        user.save()
+        reset_token.delete()
+        return user
