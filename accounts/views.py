@@ -91,6 +91,7 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class PasswordResetRequestView(APIView):
     serializer_class = PasswordResetRequestSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -101,6 +102,7 @@ class PasswordResetRequestView(APIView):
 
 class PasswordResetView(APIView):
     serializer_class = PasswordResetSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
