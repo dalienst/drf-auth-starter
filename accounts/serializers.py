@@ -21,8 +21,6 @@ class UserSerializer(serializers.ModelSerializer):
         required=True,
         validators=[UniqueValidator(queryset=User.objects.all())],
     )
-    first_name = serializers.CharField(max_length=255)
-    last_name = serializers.CharField(max_length=255)
     avatar = serializers.ImageField(use_url=True, required=False)
     password = serializers.CharField(
         max_length=128,
@@ -41,8 +39,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "email",
-            "first_name",
-            "last_name",
             "password",
             "avatar",
             "contact",
