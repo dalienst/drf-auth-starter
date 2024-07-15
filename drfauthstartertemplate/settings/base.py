@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "cloudinary",
     "django_filters",
+    "djoser",
     # Apps
     "accounts",
 ]
@@ -170,6 +171,16 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 100,
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+}
+
+# DJOSER
+DJOSER = {
+    "PASSWORD_RESET_CONFIRM_URL": "password/reset/confirm/{uid}/{token}",
+    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": True,
+    "SEND_CONFIRMATION_EMAIL": True,
+    "SERIALIZERS": {},
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
 }
 
 # email settings
